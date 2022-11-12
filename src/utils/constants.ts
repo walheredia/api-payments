@@ -1,1 +1,1 @@
-export const EmailDB = 'email';
+export const BusinessDB = 'business';
