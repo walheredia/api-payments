@@ -1,2 +1,2 @@
-# Microservices-Base
-This is a template for creating new microservices in nodejs & typescript.
+# API Payments
+Micro Service used to verify payments status and perform payments from Mercado Pago
