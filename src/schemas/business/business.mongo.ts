@@ -1,5 +1,6 @@
 import { Schema, model } from "mongoose";
-import { Business, paymentStatus } from "../../components/business/business.types";
+import { Business } from "../../components/business/business.types";
+import { paymentStatus } from "../../components/payments/payments.types";
 import { BusinessDB } from "../../utils/constants";
 
 const BusinessSchema = new Schema<Business>(

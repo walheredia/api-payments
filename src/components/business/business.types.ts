@@ -1,4 +1,5 @@
 import { Schema } from 'mongoose';
+import { paymentStatus } from '../payments/payments.types';
 
 export interface Business {
     _id: Schema.Types.ObjectId,
@@ -13,12 +14,6 @@ export interface Business {
     lastPayment?: Date,
     createdAt?: Date,
     updatedAt?: Date,
-}
-
-export enum paymentStatus {
-    pending = 'pending',
-    gracePeriodExpired = 'expired',
-    paidOut = 'paidOut'
 }
 
 enum solution {
