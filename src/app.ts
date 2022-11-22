@@ -1,8 +1,8 @@
 import express from 'express';
 import * as dotenv from 'dotenv';
 dotenv.config()
-import applyMiddlewares from './middlewares';
 const app = express();
+import applyMiddlewares from './middlewares';
 
 // Middlewares
 applyMiddlewares(app);
