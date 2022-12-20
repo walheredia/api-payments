@@ -7,3 +7,9 @@ export const buildStatusResponse = (business: Business): statusResponse => {
     }
     return response;
 }
+
+export const performPaymentVerificationProcess = (business: Business[]): any => {
+    for (const company of business) {
+        let a = company;
+    }
+}

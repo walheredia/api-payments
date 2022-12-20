@@ -34,6 +34,10 @@ const BusinessSchema = new Schema<Business>(
             type: Boolean,
             default: true,
         },
+        lastPayment: {
+            type: Date,
+            required: false,
+        },
         requirePayment: {
             type: Boolean,
             default: true

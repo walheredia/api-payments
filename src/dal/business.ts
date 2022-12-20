@@ -6,6 +6,7 @@ import {
   putBusinessByCodeParam,
   putBusinessPayload,
 } from "../components/business/business.types";
+import { paymentStatus } from "../components/payments/payments.types";
 import BusinessModel from "../schemas/business/business.mongo";
 
 export const createBusiness = async (param: Business): Promise<Business> => {
@@ -13,7 +14,7 @@ export const createBusiness = async (param: Business): Promise<Business> => {
 };
 
 export const getBusiness = async (): Promise<Business[]> => {
-  return await BusinessModel.find({ isActive: 1 });
+  return await BusinessModel.find({ isActive: 1 }).lean();
 };
 
 export const getBusinessByCode = async (
@@ -47,4 +48,10 @@ export const deleteBusinessByCode = async (
     { $set: { isActive: false } },
     { returnOriginal: false}
   );
+};
+
+export const updateLastPayment = async (
+  param: getBusinessByIdParam
+): Promise<Business | null> => {
+  return await BusinessModel.findOneAndUpdate({ isActive: 1, _id: param._id }, { lastPayment: new Date, paymentStatus: paymentStatus.paidOut});
 };

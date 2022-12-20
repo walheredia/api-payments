@@ -42,3 +42,9 @@ export const deleteBusinessByCodeService = async (
 ): Promise<Business | null> => {
   return await businessDal.deleteBusinessByCode(param);
 };
+
+export const updateLastPaymentService = async (
+  param: getBusinessByIdParam
+): Promise<Business | null> => {
+  return await businessDal.updateLastPayment(param);
+};
