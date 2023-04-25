@@ -1,11 +1,8 @@
 {
-  "name": "azumo-api-email",
+  "name": "api-payments",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "engines": {
-    "node": "14.x"
-  },
   "scripts": {
     "ts:node": "ts-node src/index.ts",
     "clean": "rm -rf dist",
