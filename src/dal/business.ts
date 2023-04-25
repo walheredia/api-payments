@@ -5,6 +5,7 @@ import {
   getBusinessByIdParam,
   putBusinessByCodeParam,
   putBusinessPayload,
+  updatePaymentStatusParam,
 } from "../components/business/business.types";
 import { paymentStatus } from "../components/payments/payments.types";
 import BusinessModel from "../schemas/business/business.mongo";
@@ -54,4 +55,10 @@ export const updateLastPayment = async (
   param: getBusinessByIdParam
 ): Promise<Business | null> => {
   return await BusinessModel.findOneAndUpdate({ isActive: 1, _id: param._id }, { lastPayment: new Date, paymentStatus: paymentStatus.paidOut});
+};
+
+export const updatePaymentStatus = async (
+  param: updatePaymentStatusParam
+): Promise<Business | null> => {
+  return await BusinessModel.findOneAndUpdate({ isActive: 1, _id: param._id }, { paymentStatus: param.paymentStatus});
 };

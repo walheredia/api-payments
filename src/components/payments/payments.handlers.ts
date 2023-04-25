@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response, Router } from "express";
 import ApiResponse from "../../common";
 import { getBusiness, getBusinessByCodeService, updateLastPaymentService } from "../business/business.services";
-import { buildStatusResponse, performPaymentVerificationProcess } from "./payments.helper";
+import { buildStatusResponse, performPaymentVerificationProcessAndReturnResume } from "./payments.helper";
 import { createPaymentService } from "./payments.services";
 import { Payment } from "./payments.types";
 
@@ -32,28 +32,6 @@ export const handlerGetPaymentStatusByBusinessCode = async (
   }
 };
 
-export const handlerPostPaymentVerificationProcess = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<Response> => {
-  try {
-    //TODO
-    const business = await getBusiness();
-    if (business)
-      performPaymentVerificationProcess(business);
-    return res
-      .status(200)
-      .json(ApiResponse.successResponse({ data: business }));
-    
-  } catch (err) {
-    const error = err as Error;
-    return res
-      .status(500)
-      .json(ApiResponse.errorResponse({ message: error.message }));
-  }
-};
-
 export const handlerPostPayment = async (
   req: Request,
   res: Response,
@@ -76,6 +54,27 @@ export const handlerPostPayment = async (
     return res
       .status(200)
       .json(ApiResponse.successResponse({ data: "Payment registered successfully" }));
+  } catch (err) {
+    const error = err as Error;
+    return res
+      .status(500)
+      .json(ApiResponse.errorResponse({ message: error.message }));
+  }
+};
+
+export const handlerPostPaymentVerificationProcess = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<Response> => {
+  try {
+    const business = await getBusiness();
+    const result = await performPaymentVerificationProcessAndReturnResume(business);
+
+    return res
+      .status(200)
+      .json(ApiResponse.successResponse({ data: result }));
+    
   } catch (err) {
     const error = err as Error;
     return res

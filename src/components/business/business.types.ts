@@ -11,7 +11,7 @@ export interface Business {
     expirationDay: number,
     gracePeriodDays: number,
     paymentStatus: paymentStatus,
-    lastPayment?: Date,
+    lastPayment: Date,
     createdAt?: Date,
     updatedAt?: Date,
 }
@@ -43,3 +43,7 @@ export interface putBusinessPayload {
     expirationDay?: number,
     gracePeriodDays?: number,
 }
+
+export interface updatePaymentStatusParam extends getBusinessByIdParam {
+    paymentStatus: paymentStatus
+} 
