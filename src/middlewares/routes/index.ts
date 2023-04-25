@@ -7,7 +7,7 @@ const componentsPath = path.resolve(__dirname, '..', '..', 'components');
 /**
  * main routing is handled by this algorithm, we only need to create a folder in "components"
  * and expose in the index the api Router and the prefix
- */
+ */ 
 
 interface componentModule {
     router: Router;
