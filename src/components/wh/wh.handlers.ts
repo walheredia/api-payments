@@ -2,16 +2,27 @@ import { NextFunction, Request, Response, Router } from 'express';
 import ApiResponse from '../../common';
 import { WebHookPayment } from './wh.types';
 import { createWebhookService } from './wh.services';
+import mercadopago from 'mercadopago';
+
+mercadopago.configure({
+  access_token: process.env.MERCADO_PAGO_ACCESS_TOKEN || '',
+});
 
 const router = Router();
 
 export const handlerWh = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
     try {
         const webHook = req.body as WebHookPayment;
-        const resCreateWebhook = await createWebhookService(webHook);
+        //const resCreateWebhook = await createWebhookService(webHook);
+        const paymentInfo:any = await mercadopago.payment.findById(123).then(function(payment){
+            console.log(payment);
+          }).catch(function(error){
+            console.log(error);
+          });
+        console.log()
         return res
         .status(200)
-        .json(ApiResponse.successResponse({data: resCreateWebhook}));
+        .json(ApiResponse.successResponse({data: paymentInfo}));
     } catch (err) {
         const error = err as Error;
         throw new Error(error.message);
