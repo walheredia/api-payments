@@ -13,16 +13,15 @@ const router = Router();
 export const handlerWh = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
     try {
         const webHook = req.body as WebHookPayment;
-        //const resCreateWebhook = await createWebhookService(webHook);
-        const paymentInfo:any = await mercadopago.payment.findById(123).then(function(payment){
-            console.log(payment);
+        const resCreateWebhook = await createWebhookService(webHook);
+        /*const paymentInfo:any = await mercadopago.payment.findById(Number(1312755552)).then(function(payment){
+            return payment;
           }).catch(function(error){
-            console.log(error);
-          });
-        console.log()
+            return error;
+          });*/
         return res
         .status(200)
-        .json(ApiResponse.successResponse({data: paymentInfo}));
+        .json(ApiResponse.successResponse({data: resCreateWebhook}));
     } catch (err) {
         const error = err as Error;
         throw new Error(error.message);
