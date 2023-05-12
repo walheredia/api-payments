@@ -13,5 +13,8 @@ export interface WebHookPayment {
 
 export enum webHookActions {
     created = 'payment.created'
-} 
-  
+}
+
+export enum paymentStatus {
+    approved = 'approved'
+}

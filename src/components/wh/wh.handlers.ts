@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response, Router } from 'express';
 import ApiResponse from '../../common';
-import { WebHookPayment, webHookActions } from './wh.types';
+import { WebHookPayment, paymentStatus, webHookActions } from './wh.types';
 import { createWebhookService } from './wh.services';
 import mercadopago from 'mercadopago';
 import { handlerPostPayment } from '../payments/payments.handlers';
@@ -25,7 +25,9 @@ export const handlerWh = async (req: Request, res: Response, next: NextFunction)
             }).catch(function(error){
               return error;
             });
-            await processInternalPayment(paymentInfo.body.external_reference);
+            if(paymentInfo?.response?.status == paymentStatus.approved){
+              await processInternalPayment(paymentInfo.body.external_reference);
+            }
             return res
               .status(200)
               .json(ApiResponse.successResponse({data: paymentInfo}));
