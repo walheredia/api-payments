@@ -41,11 +41,11 @@ export const handlerPostPayment = async (
     const { businessCode } = req.params;
     const business = await getBusinessByCodeService({code: businessCode});
     if(!business)
-    return res
-      .status(404)
-      .json(ApiResponse.errorResponse({ message: "Business not found" }));
+      return res
+        .status(404)
+        .json(ApiResponse.errorResponse({ message: "Business not found" }));
     
-      const paymentPayload = {
+    const paymentPayload = {
       business: business._id,
     } as Payment;
     await createPaymentService(paymentPayload);

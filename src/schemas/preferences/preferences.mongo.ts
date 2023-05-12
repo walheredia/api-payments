@@ -11,8 +11,12 @@ const BusinessSchema = new Schema<Preference>(
             unit_price: { type: Number, required: true }
         }],
         payer: {
-            company_id: { type: Number, required: true },
+            company_id: { type: Number, required: false },
             email: { type: String, required: false },
+        },
+        external_reference: {
+            type: String,
+            required: true
         },
         isActive: {
             type: Boolean,

@@ -10,4 +10,8 @@ export interface WebHookPayment {
         id: string;
     }
 }
+
+export enum webHookActions {
+    created = 'payment.created'
+} 
   
