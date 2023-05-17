@@ -11,6 +11,7 @@ export interface Preference {
         pending?: string,
     },
     isActive: boolean,
+    status: number,
     mp_id?: string,
     mp_sandbox?: string,
     createdAt?: Date,
@@ -26,4 +27,9 @@ interface Item {
 interface Payer {
     company_id: number,
     email?: string,
+}
+
+export enum PreferenceStatus {
+    pending = 1,
+    paidOut = 2
 }

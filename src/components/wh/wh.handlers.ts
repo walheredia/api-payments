@@ -3,10 +3,12 @@ import ApiResponse from '../../common';
 import { WebHookPayment, paymentStatus, webHookActions } from './wh.types';
 import { createWebhookService } from './wh.services';
 import mercadopago from 'mercadopago';
-import { handlerPostPayment } from '../payments/payments.handlers';
 import { getBusinessByCodeService, updateLastPaymentService } from '../business/business.services';
 import { Payment } from '../payments/payments.types';
 import { createPaymentService } from '../payments/payments.services';
+import { updatePreferenceStatusService } from '../preferences/preferences.services';
+import { PreferenceStatus } from '../preferences/preferences.types';
+import mongoose from "mongoose";
 
 mercadopago.configure({
   access_token: process.env.MERCADO_PAGO_ACCESS_TOKEN || '',
@@ -45,15 +47,30 @@ export const handlerWh = async (req: Request, res: Response, next: NextFunction)
 };
 
 const processInternalPayment = async(businessCode: string) => {
-  const business = await getBusinessByCodeService({code: businessCode});
-  if(!business)
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    const business = await getBusinessByCodeService({code: businessCode});
+    if(!business) {
+      throw new Error('Business not found');
+    }
+
+    const paymentPayload = {
+      business: business._id,
+    } as Payment;
+
+    await createPaymentService(paymentPayload);
+    await updateLastPaymentService({_id: business._id});
+    await updatePreferenceStatusService(businessCode, PreferenceStatus.paidOut);
+
+    await session.commitTransaction();
+    return true;
+  } catch (error) {
+    await session.abortTransaction();
     return false;
-  const paymentPayload = {
-    business: business._id,
-  } as Payment;
-  await createPaymentService(paymentPayload);
-  await updateLastPaymentService({_id: business._id});
-  return true;
+  } finally {
+    session.endSession();
+  }
 }
 
 export default router;

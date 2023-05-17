@@ -8,3 +8,11 @@ export const createPreferenceService = async (
 ): Promise<Preference> => {
   return await preferenceDal.createPreference(param);
 };
+
+export const updatePreferenceStatusService = async (
+  businessCode: string,
+  newStatus: number
+): Promise<Preference | null> => {
+  return await preferenceDal.updatePreferenceStatus( businessCode, newStatus);
+};
+

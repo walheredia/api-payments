@@ -22,6 +22,10 @@ const BusinessSchema = new Schema<Preference>(
             type: Boolean,
             default: true,
         },
+        status: {
+            type: Number,
+            default: 1,
+        },
         mp_id: { type: String, required: false },
         mp_sandbox: { type: String, required: false },
     },
