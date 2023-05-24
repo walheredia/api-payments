@@ -18,6 +18,9 @@ const BusinessSchema = new Schema<Preference>(
             type: String,
             required: true
         },
+        business: {
+            type: Schema.Types.ObjectId,
+        },
         isActive: {
             type: Boolean,
             default: true,

@@ -17,6 +17,11 @@ const BusinessSchema = new Schema<Business>(
             type: String,
             required: true,
         },
+        requirePaymentDay: {
+            type: Number,
+            required: true,
+            default: 1
+        },
         expirationDay: {
             type: Number,
             required: true,

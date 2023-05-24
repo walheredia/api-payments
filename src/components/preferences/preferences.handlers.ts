@@ -1,10 +1,8 @@
 import { NextFunction, Request, Response, Router } from "express";
 import ApiResponse from "../../common";
-import {
-  createPreferenceService,
-} from "./preferences.services";
 import { Preference} from "./preferences.types";
 import mercadopago from 'mercadopago';
+import { createPreferenceHelper } from "./preferences.helper";
 
 mercadopago.configure({
   access_token: process.env.MERCADO_PAGO_ACCESS_TOKEN || '',
@@ -20,20 +18,8 @@ export const handlerPostPreference = async (
 ): Promise<Response> => {
   try {
     const PreferencePayload = req.body as Preference;
-    PreferencePayload.back_urls = {
-      success : `${process.env.APPCONT_HOST || ''}app/mp/success`,
-      pending : `${process.env.APPCONT_HOST || ''}app/mp/pending`,
-      failure : `${process.env.APPCONT_HOST || ''}app/mp/failure`,
-    }
-    const result:any = await mercadopago.preferences.create(PreferencePayload).then(function (response) {
-      return response;
-    })
-    .catch(function (error) {
-      throw new Error(error);
-    });
-    PreferencePayload.mp_id = result?.body?.id ?? '';
-    PreferencePayload.mp_sandbox = result?.body?.init_point ?? '';
-    const internalResult = await createPreferenceService(PreferencePayload);
+
+    const internalResult = createPreferenceHelper(PreferencePayload);
     return res
       .status(200)
       .json(ApiResponse.successResponse({ data: internalResult }));

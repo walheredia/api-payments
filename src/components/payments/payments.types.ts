@@ -31,3 +31,12 @@ export interface paymentStatusParam {
     newStatus: paymentStatus,
     business: Business
 }
+
+export interface resultPaymentRequestProcess {
+    totalCompanies: number,
+    totalNotRequiredPayment: number,
+    totalExpired: number,
+    totalAlreadyPending: number,
+    totalNotRequiredToday: number,
+    totalRequiredNow: number
+}

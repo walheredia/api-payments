@@ -8,6 +8,7 @@ export interface Business {
     code: string,
     isActive: boolean,
     requirePayment: boolean,
+    requirePaymentDay: number,
     expirationDay: number,
     gracePeriodDays: number,
     paymentStatus: paymentStatus,
@@ -41,6 +42,7 @@ export interface putBusinessPayload {
     name?: string,
     requirePayment?: boolean,
     expirationDay?: number,
+    requirePaymentDay?: number,
     gracePeriodDays?: number,
 }
 

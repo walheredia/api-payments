@@ -5,6 +5,7 @@ export const BusinessSchema = yup.object({
     name: yup.string().required(),
     code: yup.string(),
     isActive: yup.boolean(),
+    requirePaymentDay: yup.number().required(),
     requirePayment: yup.boolean().required(),
     expirationDay: yup.number().required(),
     gracePeriodDays: yup.number().required(),
