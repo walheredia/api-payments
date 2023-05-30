@@ -18,7 +18,7 @@ export const handlerGetPaymentStatusByBusinessCode = async (
     if (business) {
       return res
         .status(200)
-        .json(ApiResponse.successResponse({ data: buildStatusResponse(business) }));
+        .json(ApiResponse.successResponse({ data: await buildStatusResponse(business) }));
     } else {
       return res
         .status(404)

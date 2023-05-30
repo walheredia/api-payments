@@ -1,12 +1,19 @@
 import { updatePaymentStatus } from "../../dal/business";
 import { Business } from "../business/business.types";
 import { createPreferenceHelper } from "../preferences/preferences.helper";
+import { getLastPreferenceByBusinessIdService } from "../preferences/preferences.services";
 import { Preference } from "../preferences/preferences.types";
 import { paymentStatus, paymentStatusParam, resultPaymentRequestProcess, resultPaymentVerificationProcess, statusResponse } from "./payments.types";
 
-export const buildStatusResponse = (business: Business): statusResponse => {
-    const response = {
+export const buildStatusResponse = async (business: Business): Promise<statusResponse> => {
+    let response: statusResponse = {
         paymentStatus: business.requirePayment ? business.paymentStatus : paymentStatus.paidOut,
+    }
+    if (response.paymentStatus != paymentStatus.paidOut){
+        const lastPreference = await getLastPreferenceByBusinessIdService(business._id) 
+        if (lastPreference) {
+            response.mp_sandbox = lastPreference.mp_sandbox
+        }
     }
     return response;
 }

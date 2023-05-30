@@ -1,3 +1,4 @@
+import { ObjectId } from "mongoose";
 import * as preferenceDal from "../../dal/preference";
 import {
   Preference
@@ -15,4 +16,10 @@ export const updatePreferenceStatusService = async (
 ): Promise<Preference | null> => {
   return await preferenceDal.updatePreferenceStatus( businessCode, newStatus);
 };
+
+export const getLastPreferenceByBusinessIdService = async(
+businessId: ObjectId 
+): Promise<Preference | null> => {
+  return await preferenceDal.getLastPreferenceByBusinessId(businessId);
+}
 

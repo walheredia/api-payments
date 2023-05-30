@@ -3,6 +3,7 @@ import { Business } from '../business/business.types';
 
 export interface statusResponse {
     paymentStatus: paymentStatus,
+    mp_sandbox?: string | undefined
 }
 
 export enum paymentStatus {
