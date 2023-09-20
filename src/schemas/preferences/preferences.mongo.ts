@@ -42,4 +42,4 @@ const BusinessSchema = new Schema<Preference>(
 export const PreferenceModel = model<Preference>(PreferenceDB, BusinessSchema);
 export default PreferenceModel
 
-;
+; 
