@@ -1,3 +1,4 @@
+import { ObjectId } from "mongoose";
 import { updatePaymentStatus } from "../../dal/business";
 import { Business } from "../business/business.types";
 import { createPreferenceHelper } from "../preferences/preferences.helper";
@@ -29,9 +30,14 @@ export const performPaymentVerificationProcessAndReturnResume = async (business:
     if(!business?.length)
         return result;
     for (const company of business) {
+        await createPreferenceIfDoesntHave(company);
         result.totalCompanies++;
         if(!company.requirePayment) {
             result.totalNotRequiredPayment++;
+            continue;
+        }
+        if(company.paymentStatus == paymentStatus.gracePeriodExpired){
+            result.totalExpired++;
             continue;
         }
         let newStatus:paymentStatus = paymentStatus.pending;
@@ -51,18 +57,13 @@ export const performPaymentVerificationProcessAndReturnResume = async (business:
             today.getDate(),
             0,0,0,0
         );
-        const lastMonth = new Date(
-            today.getFullYear(),
-            today.getMonth() - 1,
-            1,0,0,0,0
-        );
-        const lastDayOfPreviousMonth = new Date(lastMonth.getFullYear(), lastMonth.getMonth() + 1, 0);
+
         if(company.lastPayment >= firstDayOfMonth){
             newStatus = paymentStatus.paidOut;
             result.totalPaidOut++;
-        } else if(todayDate > limitDate || company.lastPayment <= lastDayOfPreviousMonth) {
+        } else if(todayDate > limitDate) {
             newStatus = paymentStatus.gracePeriodExpired; 
-            result.totalExpired++;
+            result.totalExpired++;   
         } else {
             result.totalPending++;
         }
@@ -71,45 +72,9 @@ export const performPaymentVerificationProcessAndReturnResume = async (business:
     return result;
 }
 
-const updatePaymentStatusIfDistinct = async(param: paymentStatusParam):Promise<void> => {
-    if(param.newStatus !== param.business.paymentStatus){
-        await updatePaymentStatus({_id: param.business._id, paymentStatus: param.newStatus});
-    }
-    return;
-}
-
-export const performPaymentRequestProcessAndReturnResume = async (business: Business[] | null): Promise<resultPaymentRequestProcess> => {
-    const result = {
-        totalCompanies: 0,
-        totalNotRequiredPayment: 0,
-        totalExpired: 0,
-        totalAlreadyPending: 0,
-        totalNotRequiredToday: 0,
-        totalRequiredNow: 0,
-    }
-    if(!business?.length)
-        return result;
-    for (const company of business) {
-        result.totalCompanies++;
-        if(!company.requirePayment){
-            result.totalNotRequiredPayment++;
-            continue;
-        }
-        if(company.paymentStatus == paymentStatus.gracePeriodExpired){
-            result.totalExpired++;
-            continue;
-        } else if (company.paymentStatus == paymentStatus.pending){
-            result.totalAlreadyPending++;
-            continue;
-        }
-        const today = new Date();
-        const dayNumber = today.getDate();
-
-        if(dayNumber != company.requirePaymentDay){
-            result.totalNotRequiredToday++;
-            continue;
-        }
-
+const createPreferenceIfDoesntHave = async(company: Business):Promise<void> => {
+    const lastPreference = await getLastPreferenceByBusinessIdService(company._id) 
+    if(!lastPreference){
         const payload = {
             items: [ { 
                 title: "AppCont Licencia",
@@ -119,11 +84,72 @@ export const performPaymentRequestProcessAndReturnResume = async (business: Busi
             }],
             external_reference: company.code
         } as Preference;
-          
-        await createPreferenceHelper(payload)
-        await updatePaymentStatusIfDistinct({newStatus: paymentStatus.pending, business: company});
-        result.totalRequiredNow++;
+            
+        await createPreferenceHelper(payload);
+        //send EMAIL here
     }
-
-    return result;
 }
+
+const updatePaymentStatusIfDistinct = async(param: paymentStatusParam):Promise<void> => {
+    if(param.newStatus !== param.business.paymentStatus){
+        await updatePaymentStatus({_id: param.business._id, paymentStatus: param.newStatus});
+    }
+    return;
+}
+
+// export const performPaymentRequestProcessAndReturnResume = async (business: Business[] | null): Promise<resultPaymentRequestProcess> => {
+//     const result = {
+//         totalCompanies: 0,
+//         totalNotRequiredPayment: 0,
+//         totalExpired: 0,
+//         totalAlreadyPending: 0,
+//         totalNotRequiredToday: 0,
+//         totalRequiredNow: 0,
+//     }
+//     if(!business?.length)
+//         return result;
+//     for (const company of business) {
+//         result.totalCompanies++;
+//         if(!company.requirePayment){
+//             result.totalNotRequiredPayment++;
+//             continue;
+//         }
+//         if(company.paymentStatus == paymentStatus.gracePeriodExpired){
+//             result.totalExpired++;
+//             continue;
+//         }
+//         if (company.paymentStatus == paymentStatus.pending){
+//             result.totalAlreadyPending++;
+//             continue;
+//         }
+
+//         //llego acá si requiere pago, si no expiró y si no está pending.
+//         const today = new Date();
+//         const dayNumber = today.getDate();
+
+//         if(dayNumber != company.requirePaymentDay){
+//             result.totalNotRequiredToday++;
+//             console.log('aca 4')
+//             continue;
+//         }
+
+//         const lastPreference = await getLastPreferenceByBusinessIdService(company._id) 
+//         if (!lastPreference) {
+//             const payload = {
+//                 items: [ { 
+//                     title: "AppCont Licencia",
+//                     quantity: 1,
+//                     unit_price: Number(process.env.SUBSCRIPTION_PRICE) || 4000,
+//                     currency_id: "ARS",
+//                 }],
+//                 external_reference: company.code
+//             } as Preference;
+              
+//             await createPreferenceHelper(payload)
+//             //await updatePaymentStatusIfDistinct({newStatus: paymentStatus.pending, business: company});
+//             result.totalRequiredNow++;
+//         }
+//     }
+
+//     return result;
+// }

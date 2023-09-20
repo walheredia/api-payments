@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response, Router } from "express";
 import ApiResponse from "../../common";
 import { getBusiness, getBusinessByCodeService, updateLastPaymentService } from "../business/business.services";
-import { buildStatusResponse, performPaymentRequestProcessAndReturnResume, performPaymentVerificationProcessAndReturnResume } from "./payments.helper";
+import { buildStatusResponse, performPaymentVerificationProcessAndReturnResume } from "./payments.helper";
 import { createPaymentService } from "./payments.services";
 import { Payment } from "./payments.types";
 
@@ -83,7 +83,7 @@ export const handlerPostPaymentVerificationProcess = async (
   }
 };
 
-export const handlerPostPaymentRequestProcess = async (
+/*export const handlerPostPaymentRequestProcess = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -102,6 +102,6 @@ export const handlerPostPaymentRequestProcess = async (
       .status(500)
       .json(ApiResponse.errorResponse({ message: error.message }));
   }
-};
+};*/
 
 export default router;
