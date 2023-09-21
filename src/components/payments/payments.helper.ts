@@ -16,6 +16,13 @@ export const buildStatusResponse = async (business: Business): Promise<statusRes
             response.mp_sandbox = lastPreference.mp_sandbox
         }
     }
+    if(response.paymentStatus == paymentStatus.pending){
+        const today = new Date();
+        const dayOfMonth = today.getDate();
+        if(dayOfMonth >= business.expirationDay){
+            response.inGracePeriod = true;
+        }
+    }
     return response;
 }
 
