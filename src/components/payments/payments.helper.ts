@@ -5,6 +5,7 @@ import { createPreferenceHelper } from "../preferences/preferences.helper";
 import { getLastPreferenceByBusinessIdService } from "../preferences/preferences.services";
 import { Preference } from "../preferences/preferences.types";
 import { paymentStatus, paymentStatusParam, resultPaymentRequestProcess, resultPaymentVerificationProcess, statusResponse } from "./payments.types";
+import { createVerification } from "../../dal/verification";
 
 export const buildStatusResponse = async (business: Business): Promise<statusResponse> => {
     let response: statusResponse = {
@@ -37,13 +38,13 @@ export const performPaymentVerificationProcessAndReturnResume = async (business:
     if(!business?.length)
         return result;
     for (const company of business) {
-        await createPreferenceIfDoesntHave(company);
         result.totalCompanies++;
         if(!company.requirePayment) {
             result.totalNotRequiredPayment++;
             continue;
         }
         if(company.paymentStatus == paymentStatus.gracePeriodExpired){
+            await createPreferenceIfDoesntHave(company);
             result.totalExpired++;
             continue;
         }

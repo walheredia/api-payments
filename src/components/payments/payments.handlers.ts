@@ -4,6 +4,7 @@ import { getBusiness, getBusinessByCodeService, updateLastPaymentService } from 
 import { buildStatusResponse, performPaymentVerificationProcessAndReturnResume } from "./payments.helper";
 import { createPaymentService } from "./payments.services";
 import { Payment } from "./payments.types";
+import { createVerification } from "../../dal/verification";
 
 const router = Router();
 
@@ -70,7 +71,7 @@ export const handlerPostPaymentVerificationProcess = async (
   try {
     const business = await getBusiness();
     const result = await performPaymentVerificationProcessAndReturnResume(business);
-
+    const verif = await createVerification(result);
     return res
       .status(200)
       .json(ApiResponse.successResponse({ data: result }));
