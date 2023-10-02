@@ -12,7 +12,7 @@ export const buildStatusResponse = async (business: Business): Promise<statusRes
         paymentStatus: business.requirePayment ? business.paymentStatus : paymentStatus.paidOut,
     }
     if (response.paymentStatus != paymentStatus.paidOut){
-        const lastPreference = await getLastPreferenceByBusinessIdService(business._id) 
+        const lastPreference = await getLastPreferenceByBusinessIdService(business._id)
         if (lastPreference) {
             response.mp_sandbox = lastPreference.mp_sandbox
         }
@@ -70,9 +70,11 @@ export const performPaymentVerificationProcessAndReturnResume = async (business:
             newStatus = paymentStatus.paidOut;
             result.totalPaidOut++;
         } else if(todayDate > limitDate) {
-            newStatus = paymentStatus.gracePeriodExpired; 
+            newStatus = paymentStatus.gracePeriodExpired;
+            await createPreferenceIfDoesntHave(company);
             result.totalExpired++;   
         } else {
+            await createPreferenceIfDoesntHave(company);
             result.totalPending++;
         }
         await updatePaymentStatusIfDistinct({newStatus: newStatus, business: company});
@@ -92,7 +94,6 @@ const createPreferenceIfDoesntHave = async(company: Business):Promise<void> => {
             }],
             external_reference: company.code
         } as Preference;
-            
         await createPreferenceHelper(payload);
         //send EMAIL here
     }
